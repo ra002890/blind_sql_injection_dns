@@ -100,14 +100,14 @@ def save_trackid(trackid, userid):
 
 def try_direct_login(trackid):
     # Change between following lines to create or close a breach
-    # sql = "SELECT users.name,users.id FROM users,tracking WHERE tracking.id = %s"
+    # sql = "SELECT users.name,users.id FROM users,tracking WHERE tracking.id = %s and users.id = tracking.user_id"
     sql = "SELECT users.id, users.name FROM users,tracking WHERE tracking.id = '" + trackid + "' and users.id = tracking.user_id"
     _conn = None
     try:
         _conn = psycopg2.connect(**CONFIG)
         _cursor = _conn.cursor()
         # Change between following lines to create or close a breach
-        #_cursor.execute(sql, (trackid, ))
+        # _cursor.execute(sql, (trackid, ))
         _cursor.execute(sql)
         print(_cursor.query)
         row = _cursor.fetchone()
