@@ -1,0 +1,19 @@
+div.container {
+    display: block;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 10%;
+    margin-right: 10%;
+    text-align: center;
+    border-width: 3px; 
+    border-color: grey;
+}
+
+.field {
+    margin-bottom: 20px;
+}

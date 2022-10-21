@@ -23,7 +23,12 @@ CREATE_TRACKINGID_TABLE = '''
         user_id INT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users (id)
     );
-    '''      
+    ''' 
+
+DROP_TABLES = '''
+    DROP TABLE users CASCADE;
+    DROP TABLE tracking CASCADE;
+'''     
 
 def create_app_user(username, password):
     sql = "INSERT INTO users(name, password) VALUES(%s,%s) RETURNING id;"
@@ -40,11 +45,12 @@ def create_app_user(username, password):
         if _conn is not None:
             _conn.close()
 
-def create_tables():
+def drop_create_tables():
     _conn = None
     try:
         _conn = psycopg2.connect(**CONFIG)
         _cursor = _conn.cursor()
+        _cursor.execute(DROP_TABLES)
         _cursor.execute(CREATE_USER_TABLE)
         _cursor.execute(CREATE_TRACKINGID_TABLE)
         _conn.commit()
@@ -56,8 +62,9 @@ def create_tables():
             _conn.close()
 
 def bootstrap():
-    create_tables()
+    drop_create_tables()
     create_app_user('administrator', str(uuid4()))
+    create_app_user('user1', 'password')
 
 def login(name, password):
     sql = "SELECT * FROM users WHERE name = %s AND password = %s"
@@ -94,7 +101,7 @@ def save_trackid(trackid, userid):
 def try_direct_login(trackid):
     # Change between following lines to create or close a breach
     # sql = "SELECT users.name,users.id FROM users,tracking WHERE tracking.id = %s"
-    sql = "SELECT users.name,users.id FROM users,tracking WHERE tracking.id = '" + trackid + "'"
+    sql = "SELECT users.id, users.name FROM users,tracking WHERE tracking.id = '" + trackid + "' and users.id = tracking.user_id"
     _conn = None
     try:
         _conn = psycopg2.connect(**CONFIG)

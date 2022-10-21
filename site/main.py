@@ -40,7 +40,7 @@ def login(request: Request, uname: str = Form(), psw: str = Form()):
     user = database.login(uname, psw)
     if user:
         database.save_trackid(trackid=tracking_id, userid=user[0])
-        _response = templates.TemplateResponse("main.html", {"request": request, "user": user})
+        _response = templates.TemplateResponse("main.html", {"request": request, "user": user[1]})
     else:
         _response = templates.TemplateResponse("home.html", {"request": request, "error": "Invalid user credentials"})
     return _response
@@ -48,7 +48,7 @@ def login(request: Request, uname: str = Form(), psw: str = Form()):
 def try_direct_login(trackid, request):
     user = database.try_direct_login(trackid)
     if user:
-        return templates.TemplateResponse("main.html", {"request": request, "user": user})
+        return templates.TemplateResponse("main.html", {"request": request, "user": user[1]})
     else:
         return templates.TemplateResponse("home.html", {"request": request})
 
